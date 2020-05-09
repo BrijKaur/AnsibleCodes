@@ -1,7 +1,0 @@
-Sr_No , Instance_ID , Image_ID , Tags
-1 , i-076751d1b33176305 . ami-0470e33cd681b2476 , {u'Name': u'Test', u'Env': u'Dev'}
-2 , i-05fa62fa9877c248e . ami-0470e33cd681b2476 , {u'Name': u'Test', u'Env': u'Dev'}
-3 , i-036ddb70c74454eb5 . ami-0470e33cd681b2476 , {u'Name': u'Test', u'Env': u'Dev'}
-4 , i-04d7a0d39353cdc4e . ami-0470e33cd681b2476 , {u'Name': u'Test', u'Env': u'Dev'}
-5 , i-05e5ad2e29d24ff59 . ami-0470e33cd681b2476 , {u'Name': u'Test', u'Env': u'Dev'}
-6 , i-04faf73f4c53e3da0 . ami-0470e33cd681b2476 , {u'Name': u'Test', u'Env': u'Dev'}
