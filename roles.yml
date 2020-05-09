@@ -1,0 +1,90 @@
+cd my_ansible_dir/
+ls
+ansible-galaxy init roles
+tree .
+.
+├── defaults
+│   └── main.yml
+├── files
+├── handlers
+│   └── main.yml
+├── meta
+│   └── main.yml
+├── README.md
+├── tasks
+│   └── main.yml
+├── templates
+├── tests
+│   ├── inventory
+│   └── test.yml
+└── vars
+    └── main.yml
+
+8 directories, 8 files
+
+ansible galaxy init update_repo --offline
+
+.
+├── defaults
+│   └── main.yml
+├── files
+├── handlers
+│   └── main.yml
+├── meta
+│   └── main.yml
+├── README.md
+├── tasks
+│   ├── 1
+│   └── main.yml
+├── templates
+├── tests
+│   ├── inventory
+│   └── test.yml
+├── update_repo
+│   ├── defaults
+│   │   └── main.yml
+│   ├── files
+│   ├── handlers
+│   │   └── main.yml
+│   ├── meta
+│   │   └── main.yml
+│   ├── README.md
+│   ├── tasks
+│   │   └── main.yml
+│   ├── templates
+│   ├── tests
+│   │   ├── inventory
+│   │   └── test.yml
+│   └── vars
+│       └── main.yml
+└── vars
+    └── main.yml
+
+    
+├── update_repo
+  ├── tasks
+  │   └── main.yml
+
+---
+# tasks file for roles
+ - name:update_repo
+   yum:
+     name: "*"
+     state: latest
+
+
+In /home/ansadmin/my_ansible_dir/ansible.cfg
+# additional paths to search for roles in, colon separated
+roles_path    = /home/ansadmin/my_ansible_dir/roles
+
+[ansadmin@ip-172-31-43-167 playbooks_general]$ cd ..
+[ansadmin@ip-172-31-43-167 my_ansible_dir]$ ansible-playbook playbooks_general/withroles.yml 
+
+withroles.yml
+---
+ - name: Implementation of multiple modules
+   hosts: localhost
+   become: yes
+
+   roles:
+     - update_repo

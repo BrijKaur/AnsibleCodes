@@ -1,0 +1,15 @@
+---
+ - name: Condtional Stmts and loops
+   hosts: webserver
+   gather_facts: false
+   become: yes
+   vars:
+     x: 23
+     y: 54
+     z: [2,3,4,5]
+   tasks:
+     - name: Condtional stmts
+       template:
+          src: conditonal.j2
+          dest: /home/ansadmin/conditionaloutput.txt
+

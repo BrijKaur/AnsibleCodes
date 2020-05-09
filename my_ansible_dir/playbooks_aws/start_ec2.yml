@@ -1,0 +1,11 @@
+---
+ - name: Start instances
+   hosts: localhost
+   connection: local
+   gather_facts: no
+   become: yes
+   tasks:
+     - name: Start instances that were previously launched
+       ec2:
+         state: 'running'
+         instance_ids: '{{ec2.instance_ids}}'

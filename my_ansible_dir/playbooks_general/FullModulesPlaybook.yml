@@ -1,0 +1,74 @@
+---
+ - name: Implementation of multiple modules
+   hosts: webserver
+   become: yes
+   vars:
+    packges: 
+     - wget
+     - vim
+     - httpd
+    boolvar: true
+    num1: 98
+    num2: 67.5
+    tech_name: 'Ansible Playbook'
+    webservers:
+     'Linux' : 'httpd'
+     'Ubuntu' : 'apache2'
+
+   vars_prompt:
+     name: yesNo
+     prompt: This you like this playbook
+     private: no 
+
+   tasks:
+
+   - name: Install multiple packages using yum 
+     yum: 
+       name: "{{packges}}"
+       state: present
+
+   - name: Starting httpd service
+     service: 
+       name: httpd
+       state: started
+     register: httpd_status  
+
+   - set_fact:
+      tomcatstatus: "{{httpd_status}}"  
+
+   - name: Backup this playbook on webserver
+     file: 
+       path: /etc/ansible/playbook_backup
+       state: directory
+       mode: '0755'
+
+   - name: Copying the file on webserver
+     copy: 
+       src: ./FullModulesPlaybook.yml
+       dest: /etc/ansible/playbook_backup/
+       mode: '0755'
+       
+   - name: Printing messages
+     debug:
+       var: inventory_hostname
+
+   - debug:
+       var: packges[0]
+
+   - debug:
+       var: packges[1] 
+
+   - debug:
+       var: packges
+    
+   - debug:     
+       msg:
+        - "webservers.keys() {{webservers.keys()}} \n webservers['Linux'] {{webservers['Linux']}} \n webservers.get('Ubuntu') {{webservers.get('Ubuntu')}}"
+        - "The following packages have been installed {{packges}}"
+        - "System Ready to Use : {{boolvar}} {{boolvar|type_debug}}"
+        - "The sum of {{num1}} {{num1|type_debug}} and {{num2}} {{num2|type_debug}} is {{num1+num2}}"
+        - "Did you like this playbook? {{yesNo}} "
+        - "httpd_status {{httpd_status}}, tomcatstatus {{tomcatstatus}}"
+         
+              
+

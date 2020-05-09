@@ -1,0 +1,6 @@
+---
+ softwares:
+   - git
+   - docker
+
+ reqStatus: 'present'  

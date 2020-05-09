@@ -1,0 +1,11 @@
+---
+ - name: Implementation of multiple modules
+   hosts: localhost
+   become: yes
+   vars_files:
+     - var1.yml
+
+   roles: 
+     - update_repo
+     - pack_role
+     - var_role

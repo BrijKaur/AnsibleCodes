@@ -1,0 +1,6 @@
+{% set sr_no=1 %}
+Sr_No , Instance_ID , Image_ID , Tags
+{% for each in Testec2.instances %}
+{{sr_no}} , {{each.instance_id}} . {{each.image_id}} , {{each.tags}}
+{% set sr_no = sr_no+1 %}
+{% endfor %}

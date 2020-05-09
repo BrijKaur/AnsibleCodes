@@ -1,0 +1,12 @@
+---
+ - name: Installing import/includes tasks
+   hosts: webserver 
+   become: yes
+   tasks: 
+    - name: include
+      include_tasks: install_webserver_{{ansible_distribution}}.yml
+
+    - name: import
+      import_tasks: install_webserver_Amazon.yml
+      # import_tasks: install_webserver_{{ansible_distribution}}.yml will not work
+        

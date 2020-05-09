@@ -1,0 +1,37 @@
+---
+ - name: Install docker and create three alpine docker containers
+   hosts: localhost
+   gather_facts: false
+   become: yes
+   tasks:
+
+    - name: Install Python3.7
+      yum:
+       name: python37
+       state: present
+
+    - name: Installing pip
+      get_url:
+        url: https://bootstrap.pypa.io/get-pip.py
+
+    - name: Installing pip
+      shell: "python3 get-pip.py --user"    
+
+    - name: Install Docker
+      pip:
+       name: docker
+       state: present
+
+    - name: Start Docker
+      service:
+       name: docker
+       state: started
+
+
+    - name: start alpine docker conatiner
+      docker_container:
+       image: alpine
+       interactive: yes
+       name: "container{{ item }}"
+       state: started
+      loop: "{{ query('inventory_hostnames', 'containers') }}"

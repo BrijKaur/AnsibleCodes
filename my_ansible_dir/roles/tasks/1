@@ -1,0 +1,6 @@
+---
+# tasks file for roles
+ - name:update_repo
+   yum:
+     name: "*"
+     state: latest

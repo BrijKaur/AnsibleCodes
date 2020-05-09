@@ -1,0 +1,8 @@
+---
+# tasks file for pack_role
+ - name: Install multiple packages using yum
+   yum:
+     name: "{{packges}}"
+     state: present
+   when: "ansible_distribution != 'Ubuntu'"
+   notify: Start_httpd

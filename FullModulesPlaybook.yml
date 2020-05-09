@@ -1,0 +1,200 @@
+---
+ - name: Implementation of multiple modules
+   hosts: webserver
+   become: yes
+   vars:
+    boolvar: true
+    num1: 98
+    num2: 67.5
+    tech_name: 'Ansible Playbook'
+    webservers:
+     'Linux' : 'httpd'
+     'Ubuntu' : 'apache2'
+    formath: [4,5,8,9,13,67]
+
+   vars_prompt:
+    - name: yesNo
+      prompt: Did you like this playbook
+      private: no
+    - name: number
+      prompt: Enter a number(although it will be stored and string and then the playbook will convert it into a number)
+      private: no
+
+   vars_files:
+     - var1.yml
+     - var2.json
+
+
+   tasks:
+
+   - name: Install multiple packages using yum
+     yum:
+       name: "{{packges}}"
+       state: present
+     when: "ansible_distribution != 'Ubuntu'"
+     notify: Starting httpd service
+     tags:
+       - httpdinstall
+       - always
+
+   - name: Install multiple packages using yum from passed file
+     yum:
+       name: "{{softwares}}"
+       state: "{{reqStatus}}"
+     when: "ansible_distribution == 'Amazon'"
+
+   - name: Install multiple packages using yum from passed file
+     yum:
+       name: "{{item}}"
+       state: "absent"
+     loop:
+       - git
+       - docker
+     tags:
+        -never
+
+   - name: Starting httpd service
+     service:
+       name: httpd
+       state: started
+     register: httpd_status
+     tags:
+       - starthttpd
+       - always
+
+   - set_fact:
+      tomcatstatus: "{{httpd_status}}"
+
+   - name: Backup this playbook on webserver
+     file:
+       path: /etc/ansible/playbook_backup
+       state: directory
+       mode: '0755'
+
+   - name: Copying the file on webserver
+     copy:
+       src: ./FullModulesPlaybook1.yml
+       dest: /etc/ansible/playbook_backup/
+       mode: '0755'
+     when: "'./testing.yml' is file"
+     # this when condition is tested on webserver hence it fails
+
+   - name: Printing messages
+     debug:
+       var: inventory_hostname
+     when: z is undefined
+     # test operator run this task only when z is undefined
+
+   - debug:
+       var: packges[0]
+
+   - debug:
+       var: packges[1]
+     when: a is defined
+     # run this only when variable a is defined
+
+   - debug:
+       var: packges
+
+   - debug:
+       msg:
+        - "webservers.keys() {{webservers.keys()}} \n webservers['Linux'] {{webservers['Linux']}} \n webservers.get('Ubuntu') {{webservers.get('Ubuntu')}}"
+        - "The following packages have been installed {{packges}}"
+        - "System Ready to Use : {{boolvar}} {{boolvar|type_debug}}"
+        - "The sum of {{num1}} {{num1|type_debug}} and {{num2}} {{num2|type_debug}} is {{num1+num2}}"
+        - "Did you like this playbook? {{yesNo|lower}} "
+        - "{{ansible_system}} and {{ansible_distribution}} Host for this command is {{inventory_hostname}}"
+       #- "and details all the servers in hosts file are in {{hostvars}}"
+       #- "{{hostvars[inventory_hostname]}} Gives the complete details of the hosts in this playbook"
+        - "{{tech_name|upper}} by {{myName|title}} my first name is {{myName.split()}}"
+        - "From var2 {{x}} and {{r}}"
+        - "From command line a= {{a}} b={{b}} c={{c}} d={{d}} "
+        - "Displaying the number you entered {{number|int}}"
+        - "Max in formath {{formath|max}} min in formath {{formath|min}} logical operators a<b or b>c {{a<b or b>c}}"
+        - "is num1 =num2 : {{num1 ==num2}} is num1 < num2 {{num1<num2}} is num1 >= num2 {{num1>=num2}} larger number is {{a if(a>num1) else num1}}"
+        - "is 13 in formath {{13 in formath}} is 16 not in formath {{16 not in formath}}"
+        - "httpd_status {{httpd_status}}, tomcatstatus {{tomcatstatus}}"       
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ansible-playbook FullModulesPlaybook1.yml -e "{'a' : 23 , 'b' : 'Hi from CL' , 'c': [3,4,5] , 'd' : {'one' : 1 , 'two': 2 }}" -e "@var3.yml"
+
+OUTPUT
+
+Did you like this playbook: yes
+Enter a number(although it will be stored and string and then the playbook will convert it into a number): 77
+
+PLAY [Implementation of multiple modules] *********************************************************************************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************************************************************************************************
+[WARNING]: Platform linux on host 172.31.33.255 is using the discovered Python interpreter at /usr/bin/python, but future installation of another Python interpreter could change
+this. See https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information.
+ok: [172.31.33.255]
+
+TASK [Install multiple packages using yum] ********************************************************************************************************************************************
+ok: [172.31.33.255]
+
+TASK [Install multiple packages using yum from passed file] ***************************************************************************************************************************
+changed: [172.31.33.255]
+
+TASK [Install multiple packages using yum from passed file] ***************************************************************************************************************************
+changed: [172.31.33.255] => (item=git)
+changed: [172.31.33.255] => (item=docker)
+
+TASK [Starting httpd service] *********************************************************************************************************************************************************
+ok: [172.31.33.255]
+
+TASK [set_fact] ***********************************************************************************************************************************************************************
+ok: [172.31.33.255]
+
+TASK [Backup this playbook on webserver] **********************************************************************************************************************************************
+ok: [172.31.33.255]
+
+TASK [Copying the file on webserver] **************************************************************************************************************************************************
+skipping: [172.31.33.255]
+
+TASK [Printing messages] **************************************************************************************************************************************************************
+ok: [172.31.33.255] => {
+    "inventory_hostname": "172.31.33.255"
+}
+
+TASK [debug] **************************************************************************************************************************************************************************
+ok: [172.31.33.255] => {
+    "packges[0]": "wget"
+    }
+
+TASK [debug] **************************************************************************************************************************************************************************
+ok: [172.31.33.255] => {
+    "packges[1]": "vim"
+}
+
+TASK [debug] **************************************************************************************************************************************************************************
+ok: [172.31.33.255] => {
+    "packges": [
+        "wget", 
+        "vim", 
+        "httpd"
+    ]
+}
+
+TASK [debug] **************************************************************************************************************************************************************************
+ok: [172.31.33.255] => {
+    "msg": [
+        "webservers.keys() [u'Linux', u'Ubuntu'] \n webservers['Linux'] httpd \n webservers.get('Ubuntu') apache2", 
+        "The following packages have been installed [u'wget', u'vim', u'httpd']", 
+        "System Ready to Use : True bool", 
+        "The sum of 98 int and 67.5 float is 165.5", 
+        "Did you like this playbook? yes ", 
+        "Linux and Amazon Host for this command is 172.31.33.255", 
+        "ANSIBLE PLAYBOOK by Brajender Kaur my first name is [u'Brajender', u'Kaur']", 
+        "From var2 34 and {u'two': 2, u'one': 1}", 
+        "From command line a= 23 b=Hi from CL c=[3, 4, 5] d={u'two': 2, u'one': 1} ", 
+        "Displaying the number you entered 77", 
+        "Max in formath 67 min in formath 4 logical operators a<b or b>c True", 
+        "is num1 =num2 : False is num1 < num2 False is num1 >= num2 True larger number is 98", 
+        "is 13 in formath True is 16 not in formath True", 
+        "httpd_status {u'status': {u'ExecStart': u'{ path=/usr/sbin/httpd ; argv[]=/usr/sbin/httpd $OPTIONS -DFOREGROUND ; ignore_errors=no ; start_time=[n/a]
+        and much more  
+PLAY RECAP ****************************************************************************************************************************************************************************
+172.31.33.255              : ok=12   changed=2    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   

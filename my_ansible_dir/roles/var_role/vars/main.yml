@@ -1,0 +1,11 @@
+---
+# vars file for var_role
+  boolvar: true
+  num1: 98
+  num2: 67.5
+  tech_name: 'Ansible Playbook'
+  webservers:
+     'Linux' : 'httpd'
+     'Ubuntu' : 'apache2'
+  formath: [4,5,8,9,13,67]
+

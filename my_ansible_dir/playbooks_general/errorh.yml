@@ -1,0 +1,29 @@
+---
+ - name: Implementation of multiple modules
+   hosts: webserver
+   become: yes
+   tasks: 
+  
+   - name: checking for error handling 
+     command: "ls -ltr > tmp.txt"
+     register: out 
+     failed_when: out.rc == 0 
+
+   - debug:
+       var: out
+
+   - block:
+       - command: "ps -ef | grep ansible"
+         register: psout
+
+       - command: "cd /etc/ansible2"
+         register: nodir
+
+     ignore_errors: yes
+
+   - block:
+       - command: "ls /homee/ansible"
+     rescue:
+       - debug: msg="Invalid path"
+     always:
+       - debug: msg="I always run"     

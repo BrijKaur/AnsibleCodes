@@ -1,0 +1,62 @@
+Playbook and hosts file to install pip, docker and start 3 alpine docker_containers
+
+Provision a AWS Linux EC2 serverless
+sudo yum update -y
+
+sudo amazon-linux-extras install ansible2 -y
+
+cd /etc/ansible
+
+sudo vi hosts
+_______________________________________________________________________________________________________
+
+hosts file :
+
+[containers]
+alpine_container[1:3] ansible_connection=docker
+
+________________________________________________________________________________________________________
+
+sudo vi dockerUsingAnsible.yml
+
+ansible-playbook dockerAnsible.yml
+___________________________________________________________________________________________________________
+
+Playbook : dockerUsingAnsible.yml
+
+---
+ - name: Install docker and create three alpine docker containers
+   hosts: localhost
+   gather_facts: false
+   become: yes
+   vars:
+     packages:
+     - python-setuptools
+     - python-pip
+     - docker
+
+   tasks:
+
+    - name: Installing required python packages
+      yum:
+        name: "{{ packages }}"
+
+    - name: Installing docker using pip
+      pip:
+       name: docker
+       state: present
+
+    - name: Start Docker
+      service:
+       name: docker
+       state: started
+
+
+    - name: start alpine docker conatiner
+      docker_container:
+       image: alpine
+       interactive: yes
+       name: "{{ item }}"
+       state: started
+      loop: "{{ query('inventory_hostnames', 'containers') }}"
+                                                                  

@@ -1,0 +1,23 @@
+This is variable x :{{x}} and y : {{y}} and z: {{z}}
+
+{% if x > y %}
+x is greater then y by {{x-y}}
+{% endif %}
+
+{% if x > y %}
+x is greater then y by {{x-y}}
+{% else %}
+y is greater then x by {{y-x}}
+{% endif %}
+
+{% if x > y %}
+x is greater then y by {{x-y}}
+{% elif y>x  %}
+y is greater then x by {{y-x}}
+{% else %}
+x and y are equal
+{% endif %}
+
+{% for each in z %}
+z has {{each}}
+{% endfor %}

@@ -1,0 +1,10 @@
+---
+# handlers file for pack_role
+- name: Starting httpd service
+  service:
+       name: httpd
+       state: started
+  register: httpd_status
+  tags:
+       - starthttpd
+       - always

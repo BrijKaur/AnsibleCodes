@@ -1,0 +1,56 @@
+---
+ - name: Installing tomcat on web server
+   hosts: webserver
+   become: true
+   vars:
+     custom_port: 8090
+   tasks:
+    
+    - name: updating repos
+      yum: 
+       name: "*"
+       state: latest
+
+    - name: installing required java
+      yum:
+        name: java-1.8.0-openjdk
+        state: latest
+
+    - name: Setting default java same as alternatives --config java
+      alternatives:
+        name: java
+        link: /usr/bin/java
+        path: /usr/lib/jvm/jre-1.8.0-openjdk/bin/java
+
+    - name: get tomcat
+      get_url:
+         url: http://apachemirror.wuchna.com/tomcat/tomcat-9/v9.0.34/bin/apache-tomcat-9.0.34.tar.gz
+         dest: /usr/local    
+
+    - name: untar tomcat
+      unarchive:
+        src: /usr/local/apache-tomcat-9.0.34.tar.gz
+        dest: /usr/local
+        remote_src: yes
+
+    - name: Deleting any old tomcat if present
+      file:
+        path: /usr/local/tomcat-latest
+        state: absent
+                       
+    - name: renaming tomcat home
+      command: mv /usr/local/apache-tomcat-9.0.34 /usr/local/tomcat-latest
+   
+    - name: Replace server.xml
+      template:
+         src: server.xml.j2
+         dest: /usr/local/tomcat-latest/conf/server.xml
+
+    - name: shutting tomcat
+      shell: /usr/local/tomcat-latest/bin/shutdown.sh
+
+    - name: starting tomcat
+      shell: nohup /usr/local/tomcat-latest/bin/startup.sh &
+
+   
+     

@@ -1,0 +1,16 @@
+---
+# tasks file for var_role
+- debug:
+       msg:
+        - "webservers.keys() {{webservers.keys()}} \n webservers['Linux'] {{webservers['Linux']}} \n webservers.get('Ubuntu') {{webservers.get('Ubuntu')}}"
+        - "System Ready to Use : {{boolvar}} {{boolvar|type_debug}}"
+        - "The sum of {{num1}} {{num1|type_debug}} and {{num2}} {{num2|type_debug}} is {{num1+num2}}"
+        - "{{ansible_system}} and {{ansible_distribution}} Host for this command is {{inventory_hostname}}"
+        - "{{tech_name|upper}} : Tech Name"
+        - "Max in formath {{formath|max}} min in formath {{formath|min}}"
+        - "is num1 =num2 : {{num1 ==num2}} is num1 < num2 {{num1<num2}} is num1 >= num2 {{num1>=num2}}"
+        - "is 13 in formath {{13 in formath}} is 16 not in formath {{16 not in formath}}"
+
+- template: 
+       src: templates/ReplacingUsingTemp.j2
+       dest: /home/ansadmin/my_ansible_dir/playbooks_general/ReplacingDone.txt

@@ -1,0 +1,57 @@
+---
+ - name: Launch and termination of EC2 instances
+   hosts: localhost
+   connection: local
+   gather_facts: false
+   tasks:
+     - name: launch ec2
+       ec2: 
+         instance_type: t2.micro
+         image: ami-0470e33cd681b2476
+         region: ap-south-1
+         count: 2
+         key_name: LocalKP
+         wait: yes
+         group: launch-wizard-12
+         instance_tags:
+           Name: Test
+           Env: Dev
+         state: present
+       register: ec2 
+
+     - name: Stop instances that were previously launched
+       ec2:
+         region: ap-south-1
+         state: 'stopped'
+         instance_ids: '{{ec2.instance_ids}}'
+         wait: yes
+
+     - name: Print information about the EC2 instances
+       debug:
+          msg: 
+          - "{{ec2}}"
+
+     - name: Display only instance id of the E2 instances
+       debug:
+         msg: "{{item.id}}"
+       with_items: "{{ec2.instances}}"
+
+     - name: get information of all test instances
+       ec2_instance_info:
+           filters:
+             "tag:Name" : Test
+       register: Testec2     
+
+     - name: Generate CSV report of all test instancez
+       template:
+          src: generatecsv.j2
+          dest: ec2_instance_info.csv
+
+     - name: delete all test instance
+       ec2:
+         region: ap-south-1
+         instance_ids: '{{item.instance_id}}'
+         state: absent
+         wait: yes
+       with_items: "{{Testec2.instances}}"
+       when: item.tags.keys() | length != 0  
