@@ -1,11 +1,11 @@
 [webserver]
-172.31.33.255
+<ipadd of webserver>
 
 [appserver]
-172.31.46.202
+<ipadd of appserver>
 
 [dbserver]
-172.31.47.216
+<ipadd of dbserver>
 
 [devops:children]
 webserver
